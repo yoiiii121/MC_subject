@@ -23,90 +23,122 @@ for s in range(loop):
     execution_time = []
     image_name = switcher.get(s, "Nothing")
 
-    names.append("Color read")
+    text = "Color read"
+    names.append(text)
     init_time.append(tm.time())
     img1 = cv2.imread(image_name, cv2.IMREAD_COLOR)
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    img_copy = img1.copy()
+    cv2.putText(img1, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, img1)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), img1)
     cv2.waitKey(0)
+    img1 = img_copy.copy()
 
-    names.append("Black and white read")
+    text = "Black and white read"
+    names.append(text)
     init_time.append(tm.time())
     img2 = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    img_copy = img2.copy()
+    cv2.putText(img2, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, img2)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), img2)
     cv2.waitKey(0)
+    img2 = img_copy.copy()
 
-    names.append("Original read")
+    text = "Original read"
+    names.append(text)
     init_time.append(tm.time())
     img3 = cv2.imread(image_name, cv2.IMREAD_UNCHANGED)
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    img_copy = img3.copy()
+    cv2.putText(img3, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, img3)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), img3)
     cv2.waitKey(0)
+    img3 = img_copy.copy()
 
-    names.append("Color to black and white")
+    text = "Color to black and white"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Color to HLS")
+    text = "Color to HLS"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.cvtColor(img1, cv2.COLOR_BGR2HLS)
     final_time.append(tm.time())
-    cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Median filter normalized")
+    text = "Median filter normalized"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.medianBlur(img3, 5)
     final_time.append(tm.time())
-    cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Bilateral Filter filter normalized")
+    text = "Bilateral filter normalized"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.bilateralFilter(img3, 9, 75, 75)
     final_time.append(tm.time())
-    cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Gaussian filter normalized")
+    text = "Gaussian filter normalized"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.GaussianBlur(img3, (5, 5), 0)
     final_time.append(tm.time())
-    cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Mean filter normalized")
+    text = "Mean filter normalized"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.blur(img3, (5, 5))
     final_time.append(tm.time())
-    cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Negative filter")
+    text = "Negative filter"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.bitwise_not(img1)
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Filling border")
+    text = "Filling border"
+    names.append(text)
     init_time.append(tm.time())
     row, col = img3.shape[:2]
-    bottom = img3[row-2:row, 0:col]
+    bottom = img3[row - 2:row, 0:col]
     mean = cv2.mean(bottom)[0]
 
     border_size = 30
@@ -119,10 +151,13 @@ for s in range(loop):
                              value=[mean, mean, mean])
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Detecting edges")
+    text = "Detecting edges"
+    names.append(text)
     init_time.append(tm.time())
     fast = cv2.FastFeatureDetector_create(0)
     kp = fast.detect(img3, None)
@@ -130,61 +165,86 @@ for s in range(loop):
     cv2.drawKeypoints(img3, kp, aux, color=(255, 0, 0))
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Threshold filter medium value")
+    text = "Threshold filter medium value"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.threshold(img1, 100.0, 255.0, cv2.THRESH_TRUNC)[1]
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Threshold filter high value")
+    text = "Threshold filter high value"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.threshold(img1, 200.0, 255.0, cv2.THRESH_TRUNC)[1]
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Threshold filter low value")
+    text = "Threshold filter low value"
+    names.append(text)
     init_time.append(tm.time())
     aux = cv2.threshold(img1, 50.0, 255.0, cv2.THRESH_BINARY)[1]
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Adding noise randomly")
+    text = "Adding noise randomly"
+    names.append(text)
     init_time.append(tm.time())
     aux = img2.copy()
-    cv2.randn(aux, aux.mean(), aux.std()/5)
+    cv2.randn(aux, aux.mean(), aux.std() / 5)
     cv2.add(img2, aux, aux, mask=None)
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("Equalize Hist filter")
+    text = "Equalize Hist filter"
+    names.append(text)
     init_time.append(tm.time())
     equ = cv2.equalizeHist(img2)
     aux = np.hstack((img2, equ))  # stacking images side-by-side
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
-    names.append("CreateCLAHE filter")
+    text = "CreateCLAHE filter"
+    names.append(text)
     init_time.append(tm.time())
     contrast = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     aux = contrast.apply(img2)
     final_time.append(tm.time())
     cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    for j in range(len(init_time)):
+        execution_time.append((final_time[j] - init_time[j]) * 1000)
+    it.append(init_time)
+    ft.append(final_time)
+    na.append(names)
+    ejt.append(execution_time)
 
     # http://docs.opencv.org/3.1.0/d5/daf/tutorial_py_histogram_equalization.html
     hist, bins = np.histogram(img3.flatten(), 256, [0, 256])
@@ -208,20 +268,18 @@ for s in range(loop):
     plt.title(windows_name)
     plt.show()
     plt.close()
-    for j in range(len(init_time)):
-        execution_time.append((final_time[j] - init_time[j]) * 1000)
-    it.append(init_time)
-    ft.append(final_time)
-    na.append(names)
-    ejt.append(execution_time)
 
+infile = open("./images/Execution time.txt", "w+")
 for j in range(loop):
     print("Photo: {}".format(j))
     for i in range(len(ejt[0])):
-        print("Execution time: {}ms ==> {}".format(ejt[j][i], na[j][i]))
+        print("Execution time{}: {}ms ==> {}".format(j, ejt[j][i], na[j][i]))
+        infile.write("Execution time{}: {}ms ==> {}\n".format(j, ejt[j][i], na[j][i]))
     plt.plot(ejt[j])
     plt.xlim(0, len(it[j]) - 1)
+infile.close()
 plt.legend(('a', 'b', 'c', 'histogram'), loc='upper left')
 plt.title(windows_name)
 plt.show()
 plt.close()
+cv2.destroyAllWindows()
