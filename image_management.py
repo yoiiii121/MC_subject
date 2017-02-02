@@ -203,6 +203,22 @@ for s in range(loop):
     cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
     cv2.waitKey(0)
 
+    # http://stackoverflow.com/questions/33322488/how-to-change-image-illumination-in-openCV-python/33333692
+    text = "Gamma correlation filter"
+    names.append(text)
+    init_time.append(tm.time())
+    gamma = 2.5
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255
+                      for i in np.arange(0, 256)]).astype("uint8")
+    aux = cv2.LUT(img1, table)
+    final_time.append(tm.time())
+    cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.imshow(windows_name, aux)
+    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+    cv2.waitKey(0)
+
     text = "Adding noise randomly"
     names.append(text)
     init_time.append(tm.time())
