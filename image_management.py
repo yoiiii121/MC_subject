@@ -18,7 +18,7 @@ it = []
 ft = []
 na = []
 ejt = []
-loop = 6    
+loop = 6
 for s in range(loop):
     init_time = []
     final_time = []
