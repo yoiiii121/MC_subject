@@ -6,16 +6,19 @@ import time as tm
 windows_name = "Photos"
 
 switcher = {
-    0: "poor_illumination.jpg",
-    1: "noisy_photo.jpg",
-    2: "noisy_photo2.jpg"
+    0: "poor_illumination1.jpg",
+    1: "poor_illumination2.jpg",
+    2: "poor_illumination3.jpg",
+    3: "noisy_photo1.jpg",
+    4: "noisy_photo2.jpg",
+    5: "noisy_photo3.jpg"
 }
 
 it = []
 ft = []
 na = []
 ejt = []
-loop = 3
+loop = 6    
 for s in range(loop):
     init_time = []
     final_time = []
@@ -210,6 +213,7 @@ for s in range(loop):
     gamma = 2.5
     invGamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** invGamma) * 255
+
                       for i in np.arange(0, 256)]).astype("uint8")
     aux = cv2.LUT(img1, table)
     final_time.append(tm.time())
