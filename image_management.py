@@ -1,10 +1,24 @@
+import math as ma
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import time as tm
-import math as ma
 
 windows_name = "Photos"
+
+
+def input_read(text, from_number, to_number):
+    print(text)
+    condition = True
+    input_number = 0
+    while condition:
+        try:
+            input_number = int(input("Input a number from {} to {}: ".format(from_number, to_number)))
+        except ValueError:
+            print("Value incorrect")
+            input_number = 5
+        if from_number <= input_number <= to_number:
+            condition = False
+    return input_number
 
 
 def mean_square_error(img, other_img):
@@ -21,446 +35,266 @@ def signal_to_noise_ratio_error(img, other_img):
     m, n = img.shape[:2]
     err = np.double(0.0)
     err_den = np.double(0.0)
-    smooth = m * n
     for c1 in range(m):
         for c2 in range(n):
             err += img[c1][c2] ** 2
-            err_den +=(other_img[c1][c2] - img[c1][c2]) ** 2
+            err_den += (other_img[c1][c2] - img[c1][c2]) ** 2
     return err / err_den
 
 
-switcher = {
-    0: "poor_illumination1.jpg",
-    1: "poor_illumination2.jpg",
-    2: "poor_illumination3.jpg",
-    3: "noisy_photo1.jpg",
-    4: "noisy_photo2.jpg",
-    5: "noisy_photo3.jpg"
-}
-
-it = []
-ft = []
-na = []
-ejt = []
-m_e = []
-s_e = []
-show = False
-loop = 2
-for s in range(loop):
-    init_time = []
-    final_time = []
-    names = []
-    execution_time = []
-    mean_error = []
-    signal_error = []
-
-    image_name = switcher.get(s, "Nothing")
-
-    text = "Color read"
-    names.append(text)
-    init_time.append(tm.time())
-    img1 = cv2.imread(image_name, cv2.IMREAD_COLOR)
-    final_time.append(tm.time())
-    if show:
-        img_copy = img1.copy()
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(img1, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, img1)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-        img1 = img_copy.copy()
-    else:
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), img1)
-
-    text = "Black and white read"
-    names.append(text)
-    init_time.append(tm.time())
-    img2 = cv2.imread(image_name, cv2.IMREAD_GRAYSCALE)
-    final_time.append(tm.time())
-    if show:
-        img_copy = img2.copy()
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(img2, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, img2)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-        img2 = img_copy.copy()
-    else:
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), img2)
+def similarity_measure_based_on_histogram(img, other_img):
+    try:
+        m, n = img.shape[:2]
+        err = np.double(0.0)
+        for c1 in range(256):
+            err += np.abs(img[c1] - other_img[c1])
+        return err / (2 * m * n)
+    except ValueError:
+        print("Function Similarity measure based on histogram not available")
+        print()
 
 
-    text = "Original read"
-    names.append(text)
-    init_time.append(tm.time())
-    img3 = cv2.imread(image_name, cv2.IMREAD_UNCHANGED)
-    final_time.append(tm.time())
-    if show:
-        img_copy = img3.copy()
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(img3, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, img3)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-        img3 = img_copy.copy()
-    else:
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), img3)
+def show_write_photo(text, img):
+    img_copy = img.copy()
+    cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
+    cv2.putText(img, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.imshow(windows_name, img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    img = img_copy.copy()
+    cv2.imwrite("./images/{}_result.jpg".format(text), img)
 
 
-    text = "Color to black and white"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+def color_read(text):
+    return cv2.imread(text, cv2.IMREAD_COLOR)
 
 
-    text = "Color to HLS"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.cvtColor(img1, cv2.COLOR_BGR2HLS)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
-
-    text = "Median filter normalized"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.medianBlur(img3, 5)
-    final_time.append(tm.time())
-    if show:
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+def gray_scale_read(text):
+    return cv2.imread(text, cv2.IMREAD_GRAYSCALE)
 
 
-    text = "Bilateral filter normalized"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.bilateralFilter(img3, 9, 75, 75)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
-
-    text = "Gaussian filter normalized"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.GaussianBlur(img3, (5, 5), 0)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+def unchanged_read(text):
+    return cv2.imread(text, cv2.IMREAD_UNCHANGED)
 
 
-    text = "Mean filter normalized"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.blur(img3, (5, 5))
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+def color_to_gray_scale(img):
+    try:
+        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    except cv2.error:
+        print("function Color to gray scale not available")
+        print()
 
-    text = "Negative filter"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.bitwise_not(img1)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
 
-    text = "Filling border"
-    names.append(text)
-    init_time.append(tm.time())
-    row, col = img3.shape[:2]
-    bottom = img3[row - 2:row, 0:col]
-    mean = cv2.mean(bottom)[0]
+def color_to_gray_scale2(img):
+    try:
+        h, l, s = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2HLS))
+        return l
+    except cv2.error:
+        print("function Color to gray scale2 not available")
+        print()
 
-    border_size = 30
-    aux = cv2.copyMakeBorder(img3,
-                             top=border_size,
-                             bottom=border_size,
-                             left=border_size,
-                             right=border_size,
-                             borderType=cv2.BORDER_CONSTANT,
-                             value=[mean, mean, mean])
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
 
-    text = "Detecting edges"
-    names.append(text)
-    init_time.append(tm.time())
-    fast = cv2.FastFeatureDetector_create(0)
-    kp = fast.detect(img3, None)
-    aux = img3.copy()
-    cv2.drawKeypoints(img3, kp, aux, color=(255, 0, 0))
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+def negative_filter(img):
+    return cv2.bitwise_not(img)
 
-    text = "Threshold filter medium value"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.threshold(img1, 100.0, 255.0, cv2.THRESH_TRUNC)[1]
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
 
-    text = "Threshold filter high value"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.threshold(img1, 200.0, 255.0, cv2.THRESH_TRUNC)[1]
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+def threshold_filter(img):
+    return cv2.threshold(img, 100.0, 255.0, cv2.THRESH_TRUNC)[1]
 
-    text = "Threshold filter low value"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = cv2.threshold(img1, 50.0, 255.0, cv2.THRESH_BINARY)[1]
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
 
-    # http://stackoverflow.com/questions/33322488/how-to-change-image-illumination-in-openCV-python/33333692
-    text = "Gamma correlation filter"
-    names.append(text)
-    init_time.append(tm.time())
+def median_normalized_filter(img):
+    return cv2.medianBlur(img, 5)
+
+
+def bilateral_normalized_filter(img):
+    return cv2.bilateralFilter(img, 9, 75, 75)
+
+
+def gaussian_normalized_filter(img):
+    return cv2.GaussianBlur(img, (5, 5), 0)
+
+
+def mean_normalized_filter(img):
+    return cv2.blur(img, (5, 5))
+
+
+# http://stackoverflow.com/questions/33322488/how-to-change-image-illumination-in-openCV-python/33333692
+def gamma_correlation_filter(img):
     gamma = 2.5
-    invGamma = 1.0 / gamma
-    table = np.array([((i / 255.0) ** invGamma) * 255
+    inv_gamma = 1.0 / gamma
+    table = np.array([((i_local / 255.0) ** inv_gamma) * 255
+                      for i_local in np.arange(0, 256)]).astype("uint8")
+    return cv2.LUT(img, table)
 
-                      for i in np.arange(0, 256)]).astype("uint8")
-    aux = cv2.LUT(img1, table)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
 
-    text = "Adding noise randomly"
-    names.append(text)
-    init_time.append(tm.time())
-    aux = img2.copy()
+def equalize_hist(img):
+    try:
+        equ = cv2.equalizeHist(img)
+        aux = np.hstack((img, equ))  # stacking images side-by-side
+        return aux
+    except cv2.error:
+        print("Function Equalize hist not available")
+        print()
+    return None
+    # similarity_measure_based_on_histogram(aux, equ)
+
+
+def add_noise_randomly(img):
+    aux = img.copy()
     cv2.randn(aux, aux.mean(), aux.std() / 5)
-    cv2.add(img2, aux, aux, mask=None)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+    cv2.add(img, aux, aux, mask=None)
+    return aux
 
-    text = "Equalize Hist filter"
-    names.append(text)
-    init_time.append(tm.time())
-    equ = cv2.equalizeHist(img2)
-    aux = np.hstack((img2, equ))  # stacking images side-by-side
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
 
-    text = "CreateCLAHE filter"
-    names.append(text)
-    init_time.append(tm.time())
-    contrast = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    aux = contrast.apply(img2)
-    final_time.append(tm.time())
-    if show:
-        cv2.namedWindow(windows_name, cv2.WINDOW_NORMAL)
-        cv2.putText(aux, text, (10, 500), cv2.FONT_HERSHEY_PLAIN, 4, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.imshow(windows_name, aux)
-        cv2.waitKey(0)
-        mean_error.append(0.0)
-        signal_error.append(0.0)
-    else:
-        mean_error.append(mean_square_error(img1, aux))
-        signal_error.append(signal_to_noise_ratio_error(img1, aux))
-    cv2.imwrite("./images/{}{}.jpg".format(text, s), aux)
+def contrast_filter(img):
+    try:
+        contrast = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        return contrast.apply(img)
+    except cv2.error:
+        print("Function Contrast filter not available")
+        print()
 
-    for j in range(len(init_time)):
-        execution_time.append((final_time[j] - init_time[j]) * 1000)
-    it.append(init_time)
-    ft.append(final_time)
-    na.append(names)
-    ejt.append(execution_time)
-    m_e.append(mean_error)
-    s_e.append(signal_error)
-    if show:
-        # http://docs.opencv.org/3.1.0/d5/daf/tutorial_py_histogram_equalization.html
-        hist, bins = np.histogram(img3.flatten(), 256, [0, 256])
-        cdf = hist.cumsum()
-        cdf_normalized = cdf * hist.max() / cdf.max()
 
-        plt.plot(cdf_normalized, color='b')
-        plt.hist(img3.flatten(), 256, [0, 256], color='r')
-        plt.xlim([0, 256])
-        plt.legend(('cdf', 'histogram'), loc='upper left')
-        plt.title(windows_name)
-        plt.show()
-        plt.close()
+def show_hist():
+    plt.title(windows_name)
+    plt.show()
+    plt.close()
+    cv2.destroyAllWindows()
 
+
+def show_switcher(switcher):
+    for i in switcher:
+        print("{}: {}".format(i, switcher.get(i)))
+    print()
+
+
+def hist_cdf_normalized(img):
+    # http://docs.opencv.org/3.1.0/d5/daf/tutorial_py_histogram_equalization.html
+    hist, bins = np.histogram(img.flatten(), 256, [0, 256])
+    cdf = hist.cumsum()
+    cdf_normalized = cdf * hist.max() / cdf.max()
+
+    plt.plot(cdf_normalized, color='b')
+    plt.hist(img.flatten(), 256, [0, 256], color='r')
+    plt.xlim([0, 256])
+    plt.legend(('cdf', 'histogram'), loc='upper left')
+
+
+def hist_historic(img):
+    try:
         color = ('b', 'g', 'r')
-        for i, col in enumerate(color):
-            historic = cv2.calcHist([img1], [i], None, [256], [0, 256])
+        for i_local, col in enumerate(color):
+            historic = cv2.calcHist([img], [i_local], None, [256], [0, 256])
             plt.plot(historic, color=col)
             plt.xlim([0, 256])
         plt.legend(('b', 'g', 'r', 'histogram'), loc='upper left')
-        plt.title(windows_name)
-        plt.show()
-        plt.close()
+    except cv2.error:
+        print("function hist_historic not available")
+        print()
 
-infile = open("./images/Execution time.txt", "w+")
-for j in range(loop):
-    print("Photo: {}".format(j))
-    infile.write("Photo: {}\n".format(j))
-    for i in range(len(ejt[0])):
-        print("Execution time{}: {} ==> {}ms".format(j, na[j][i], ejt[j][i]))
-        print("Mean square error{}: {} ==> {}".format(j, na[j][i], m_e[j][i]))
-        print("Signal to noise ratio error{}: {} ==> {}".format(j, na[j][i], s_e[j][i]))
-        infile.write("Execution time{}: {} ==> {}ms\n".format(j, na[j][i], ejt[j][i]))
-        infile.write("Mean square error{}: {} ==> {}\n".format(j, na[j][i], m_e[j][i]))
-        infile.write("Signal to noise ratio error{}: {} ==> {}\n".format(j, na[j][i], s_e[j][i]))
-        infile.write("\n")
-    infile.write("\n")
-    plt.plot(ejt[j])
-    plt.xlim(0, len(it[j]) - 1)
-infile.close()
-plt.legend(('a', 'b', 'c', 'd', 'e', 'f', 'histogram'), loc='upper left')
-plt.title(windows_name)
-plt.show()
-plt.close()
-cv2.destroyAllWindows()
+
+text_photo_switcher = {
+    0: "poor_illumination1.jpg",
+    1: "poor_illumination2.jpg",
+    2: "poor_contrast1.jpg",
+    3: "poor_contrast2.jpg",
+    4: "noisy_photo1.jpg",
+    5: "noisy_photo2.jpg"
+
+}
+
+text_read_switcher = {
+    0: "Color read",
+    1: "Gray scale read",
+    2: "Original read"
+}
+
+text_function_switcher = {
+    0: "Color to GrayScale",
+    1: "Color to GrayScale 2",
+    2: "Negative filter",
+    3: "Equalize Hist filter",
+    4: "CreateCLAHE filter",
+    5: "Median filter normalized",
+    6: "Bilateral filter normalized",
+    7: "Gaussian filter normalized",
+    8: "Mean filter normalized",
+    9: "Threshold filter value",
+    10: "Gamma correlation filter",
+    11: "Adding noise randomly",
+    12: "historic cdf normalized",
+    13: "Calculate historic"
+}
+
+text_error_switcher = {
+    0: "Mean square error",
+    1: "Signal to noise ratio error",
+    2: "Similarity measure based on histogram"
+}
+
+show_switcher(text_photo_switcher)
+number_img_text = input_read("Select the photo", 0, 5)
+img_select = text_photo_switcher.get(number_img_text)
+print()
+
+img_switcher = {
+    0: color_read(img_select),
+    1: gray_scale_read(img_select),
+    2: unchanged_read(img_select)
+}
+
+show_switcher(text_read_switcher)
+number_read_text = input_read("Select the type of read", 0, 2)
+read_text = text_read_switcher.get(number_read_text)
+img_read_select = img_switcher.get(number_read_text)
+print()
+
+img_read_select_original = img_read_select.copy()
+condition_main = True
+while condition_main:
+    function_switcher = {
+        0: color_to_gray_scale(img_read_select),
+        1: color_to_gray_scale2(img_read_select),
+        2: negative_filter(img_read_select),
+        3: equalize_hist(img_read_select),
+        4: contrast_filter(img_read_select),
+        5: median_normalized_filter(img_read_select),
+        6: bilateral_normalized_filter(img_read_select),
+        7: gaussian_normalized_filter(img_read_select),
+        8: mean_normalized_filter(img_read_select),
+        9: threshold_filter(img_read_select),
+        10: gamma_correlation_filter(img_read_select),
+        11: add_noise_randomly(img_read_select),
+        12: hist_cdf_normalized(img_read_select),
+        13: hist_historic(img_read_select)
+    }
+
+    show_switcher(text_function_switcher)
+    number_function_text = input_read("Select the type of function", 0, 13)
+    function_text = text_function_switcher.get(number_function_text)
+    img_function_select = function_switcher.get(number_function_text)
+    print()
+    try:
+        bool_show = input_read("Select 1 if you want to show the img, otherwise pulse 0", 0, 1)
+        if bool_show:
+            limit_of_function_no_hist = 11
+            if 0 <= number_function_text <= limit_of_function_no_hist:
+                show_write_photo(img_select, img_function_select)
+            else:
+                show_hist()
+
+        bool_error = input_read("Select 1 if you want to show the error of the img, otherwise pulse 0", 0, 1)
+        if bool_error:
+            error_switcher = {
+                0: mean_square_error(img_read_select_original, img_function_select),
+                1: signal_to_noise_ratio_error(img_read_select_original, img_function_select),
+                2: similarity_measure_based_on_histogram(img_read_select_original, img_function_select)
+            }
+            show_switcher(text_error_switcher)
+            number_error = input_read("Select the type of error", 0, 2)
+            print("Error output of error type {} is {}: ".format(number_error, error_switcher.get(number_error)))
+    except cv2.error:
+        print("you selected a function not available")
+        print()
+    condition_main = input_read("Select 1 if you want to do another operation, otherwise pulse 0", 0, 1)
+    img_read_select = img_function_select.copy()
