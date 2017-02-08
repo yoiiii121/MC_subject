@@ -99,7 +99,7 @@ def negative_filter(img):
 
 
 def threshold_filter(img):
-    return cv2.threshold(img, 100.0, 255.0, cv2.THRESH_TRUNC)[1]
+    return cv2.threshold(img, 200.0, 255.0, cv2.THRESH_TRUNC)[1]
 
 
 def median_normalized_filter(img):
@@ -118,9 +118,8 @@ def mean_normalized_filter(img):
     return cv2.blur(img, (5, 5))
 
 
-# http://stackoverflow.com/questions/33322488/how-to-change-image-illumination-in-openCV-python/33333692
 def gamma_correlation_filter(img):
-    gamma = 2.5
+    gamma = 2.0
     inv_gamma = 1.0 / gamma
     table = np.array([((i_local / 255.0) ** inv_gamma) * 255
                       for i_local in np.arange(0, 256)]).astype("uint8")
@@ -168,29 +167,34 @@ def show_switcher(switcher):
     print()
 
 
+bool_plot1 = False
+
 def hist_cdf_normalized(img):
-    # http://docs.opencv.org/3.1.0/d5/daf/tutorial_py_histogram_equalization.html
-    hist, bins = np.histogram(img.flatten(), 256, [0, 256])
-    cdf = hist.cumsum()
-    cdf_normalized = cdf * hist.max() / cdf.max()
+        if bool_plot1 == True:
+            # http://docs.opencv.org/3.1.0/d5/daf/tutorial_py_histogram_equalization.html
+            hist, bins = np.histogram(img.flatten(), 256, [0, 256])
+            cdf = hist.cumsum()
+            cdf_normalized = cdf * hist.max() / cdf.max()
 
-    plt.plot(cdf_normalized, color='b')
-    plt.hist(img.flatten(), 256, [0, 256], color='r')
-    plt.xlim([0, 256])
-    plt.legend(('cdf', 'histogram'), loc='upper left')
+            plt.plot(cdf_normalized, color='b')
+            plt.hist(img.flatten(), 256, [0, 256], color='r')
+            plt.xlim([0, 256])
+            plt.legend(('cdf', 'histogram'), loc='upper left')
 
+bool_plot2 = False
 
 def hist_historic(img):
-    try:
-        color = ('b', 'g', 'r')
-        for i_local, col in enumerate(color):
-            historic = cv2.calcHist([img], [i_local], None, [256], [0, 256])
-            plt.plot(historic, color=col)
-            plt.xlim([0, 256])
-        plt.legend(('b', 'g', 'r', 'histogram'), loc='upper left')
-    except cv2.error:
-        print("function hist_historic not available")
-        print()
+    if bool_plot2 == True:
+        try:
+            color = ('b', 'g', 'r')
+            for i_local, col in enumerate(color):
+                historic = cv2.calcHist([img], [i_local], None, [256], [0, 256])
+                plt.plot(historic, color=col)
+                plt.xlim([0, 256])
+            plt.legend(('b', 'g', 'r', 'histogram'), loc='upper left')
+        except cv2.error:
+            print("function hist_historic not available")
+            print()
 
 
 text_photo_switcher = {
@@ -252,6 +256,12 @@ print()
 img_read_select_original = img_read_select.copy()
 condition_main = True
 while condition_main:
+    show_switcher(text_function_switcher)
+    number_function_text = input_read("Select the type of function", 0, 13)
+    if number_function_text == 12:
+        bool_plot1 = True
+    if number_function_text == 13:
+        bool_plot2 = True
     function_switcher = {
         0: color_to_gray_scale(img_read_select),
         1: color_to_gray_scale2(img_read_select),
@@ -269,11 +279,12 @@ while condition_main:
         13: hist_historic(img_read_select)
     }
 
-    show_switcher(text_function_switcher)
-    number_function_text = input_read("Select the type of function", 0, 13)
+
     function_text = text_function_switcher.get(number_function_text)
     img_function_select = function_switcher.get(number_function_text)
     print()
+    bool_plot1 = False
+    bool_plot2 = False
     try:
         bool_show = input_read("Select 1 if you want to show the img, otherwise pulse 0", 0, 1)
         if bool_show:
