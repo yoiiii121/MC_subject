@@ -1,2 +1,2 @@
 # MC_subject
-## This project uses python3 with opencv modules and relations  
+## This project uses python3 with opencv library and relations
