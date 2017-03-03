@@ -16,7 +16,7 @@ for element in listdir("./barcodes"):
 #name = "champu_barcode.png"
 #name = "EAN13.jpg"
 name = "cajaean13.jpg."
-name ="./barcodes/" + filenames[11]
+name ="./barcodes/" + filenames[3]
 image = cv2.imread(name,cv2.IMREAD_COLOR)
 
 image_original = image.copy()
@@ -37,23 +37,17 @@ if name[-3:].lower() != "bmp":
     image = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
 else:
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # Sobel se usa para buscar los bordes de la imagen
-gradX = cv2.Sobel(image, ddepth=cv2.CV_32F, dx=1, dy=0, ksize=-1)
-gradY = cv2.Sobel(image, ddepth=cv2.CV_32F, dx=0, dy=1, ksize=-1)
-# al restar los valores y hacerle el valor absoulto tenemos una imagen de los filos
-# de la imagen
-gradient = cv2.subtract(gradX, gradY)
-gradient = cv2.convertScaleAbs(gradient)
+
 
 # blur and threshold the image
-blurred = cv2.Canny(image,100,200)
-(_, thresh) = cv2.threshold(blurred, 25, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+canny = cv2.Canny(image,100,200)
+(_, thresh) = cv2.threshold(canny, 25, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 7))
 closed = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
-#closed = cv2.erode(closed, None, iterations=4)
-#closed = cv2.dilate(closed, None, iterations=4)
+closed = cv2.erode(closed, None, iterations=4)
+closed = cv2.dilate(closed, None, iterations=4)
 
 # cv2.waitKey()
 # find the contours in the thresholded image, then sort the contours
@@ -142,8 +136,8 @@ def stand_out_borers(image):
     stats = output[2]
     # The fourth cell is the centroid matrix
     centroids = output[3]
-#    cv2.imshow("Canny", image)
-#    cv2.waitKey(0)
+    cv2.imshow("Canny", image)
+    cv2.waitKey(0)
 
 
 
@@ -164,8 +158,8 @@ def hough_transformation(image):
 
     cv2.imwrite("hough.jpg",image)
 
-#    cv2.imshow("Canny",image)
-#    cv2.waitKey(0)
+    cv2.imshow("Canny",image)
+    cv2.waitKey(0)
     return image
 image =hough_transformation(image)
 def fourier_transformation(image):
