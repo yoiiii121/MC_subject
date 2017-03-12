@@ -5,11 +5,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 dir = "./barcodes/"
 
-name = dir + "QRCode_screenshot.png"
+#name = dir + "QRCode_screenshot.png"
 #name = dir + "QRCode_bmp.bmp"
 #name = dir + "QRCode_tatto.jpg"
-#name = dir + "QRCode_web.png"
-
+name = dir + "QRCode_web.png"
 # name = "./ruta/image"
 space = 255
 bar = 0
@@ -289,3 +288,4 @@ for rat in range(20,1, -1):
         except:
             boolean = True
             pass
+cv2.destroyAllWindows()
